@@ -1,63 +1,35 @@
-# LLMSRec_Syn
-Code for Our NAACL Findings 2024 paper "The Whole is Better than the Sum: Using Aggregated Demonstrations in In-Context Learning for Sequential Recommendation"
+This repository evaluates the ranking abilities of OpenAI's GPT models (e.g., GPT-3.5-turbo) on sequential recommendation datasets like ml-1m and lastfm.
 
-## 🚀 Quick Start
-
-1. Unzip dataset files.
-    ```bash
-    cd LLMSRec_Syn/dataset/ml-1m/; unzip ml-1m.inter.zip
-    cd LLMSRec_Syn/dataset/Games/; unzip Games.inter.zip
-    ```
-    For data preparation details, please refer to LLMRank's [[data-preparation]](https://github.com/RUCAIBox/LLMRank/blob/master/llmrank/dataset/data-preparation.md).
-2. Install dependencies.
+1.	Unzip dataset files.
+2.	cd LLMSRec_Syn/dataset/ml-1m/; unzip ml-1m.inter.zip
+    
+    For data preparation details, please refer to LLMRank's [data-preparation](https://github.com/RUCAIBox/LLMRank/blob/master/llmrank/dataset/data-preparation.md).
+3.  Install dependencies.
     ```bash
     pip install -r requirements.txt
-    ```
-3. Insert your OpenAI key on line 20 of ./model/rank.py.
-4. Evaluate OpenAI GPT (GPT-3.5-turbo)'s ranking abilities on ml-1m (Games/lastfm) dataset.
-    ```bash
+4.	Insert your OpenAI key on line 20 of ./model/rank.py.
+5.	Evaluate OpenAI GPT (GPT-3.5-turbo)'s ranking abilities on ml-1m / (lastfm) dataset.
+   
     cd LLMSRec_Syn/
-    python run_test.py -m RankAggregated(ours)/RankNearest(baseline)/RankFiexed(baseline) -d ml-1m
-    ```
 
-## Results
+    To run the evaluation without any noise injection 
+    ```bash
+    python run_test.py -m RankAggregated -d ml-1m / (lastfm)
 
-### ml-1m, gpt-3.5-turbo
-RankAggregated 
-```bash
-INFO  SAVE DONE! Path: dataset/ml-1m/output_files/final11_gpt-3.5-turbo_ml-1m_RankAggregated_output_2020.json
-INFO  
-recall@1 - 0.265  recall@5 - 0.6  recall@10 - 0.775       recall@20 - 1.0 recall@50 - 1.0 
-ndcg@1 - 0.265  ndcg@5 - 0.4424 ndcg@10 - 0.4988    ndcg@20 - 0.5549        ndcg@50 - 0.5549```
-```
+    python run_test.py -m RankNearest -d ml-1m / (lastfm)
 
-RankNearest
-```bash
-INFO  SAVE DONE! Path: dataset/ml-1m/output_files/final11_gpt-3.5-turbo_ml-1m_RankNearest_output_2020.json
-INFO  
-recall@1 - 0.26   recall@5 - 0.6  recall@10 - 0.76        recall@20 - 1.0 recall@50 - 1.0 
-ndcg@1 - 0.26   ndcg@5 - 0.4356 ndcg@10 - 0.4867    ndcg@20 - 0.5465        ndcg@50 - 0.5465
-```
+    python run_test.py -m RankFixed -d ml-1m / (lastfm)
 
-RankFixed
-```bash
-INFO  SAVE DONE! Path: dataset/ml-1m/output_files/final11_gpt-3.5-turbo_ml-1m_RankFixed_output_2020.json
-INFO  
-recall@1 - 0.195  recall@5 - 0.58 recall@10 - 0.76        recall@20 - 1.0 recall@50 - 1.0 
-ndcg@1 - 0.195  ndcg@5 - 0.3969 ndcg@10 - 0.4539    ndcg@20 - 0.5138        ndcg@50 - 0.5138
-```
+6.	To run the evaluation with noise injection 
+    ```bash
+    python run_test.py -m RankAggregated -d ml-1m --noise_type random --noise_ratio 0.3
 
-## 🌟 Cite Us
+    python run_test.py -m RankAggregated -d ml-1m --noise_type truncate --noise_ratio 0.3
 
-Please cite the following paper if you find our code helpful.
+    python run_test.py -m RankAggregated -d ml-1m --noise_type Duplicate --noise_ratio 0.3
+7.	We also tried for different seeds.
+    ```bash
+    python run_test.py -m RankNearest -d ml-1m --noise_type duplicate --noise_ratio 0.3 -sd 42
 
-```bibtex
-@article{wang2024whole,
-  title={The Whole is Better than the Sum: Using Aggregated Demonstrations in In-Context Learning for Sequential Recommendation},
-  author={Wang, Lei and Lim, Ee-Peng},
-  journal={arXiv preprint arXiv:2403.10135},
-  year={2024}
-}
-```
-
-The experiments are conducted using the open-source recommendation library [RecBole](https://github.com/RUCAIBox/RecBole) and [LLMRank](https://github.com/RUCAIBox/LLMRank).
+    python run_test.py -m RankAggregated -d ml-1m / (lastfm) -sd 123
+     
